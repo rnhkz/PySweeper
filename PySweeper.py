@@ -47,7 +47,7 @@ def main():
                         pg.image.load('tiles/8.jpg'),
                         pg.image.load('tiles/9.jpg')]
     cover = pg.image.load('tiles/cover.jpg')
-    select = pg.image.load('tiles/9.jpg')
+    select = pg.image.load('tiles/select.jpg')
     win_text = pg.image.load('tiles/win.png')
     lose_text = pg.image.load('tiles/lose.png')
 
