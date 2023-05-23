@@ -8,7 +8,7 @@ Prerequisite: PyGame is installed. You may get it from the official website.
 
 ### Using command-line interface:
 
-Run the followinf command at the root of the repository:
+Run the following command at the root of the repository:
 ```
 python3 PySweeper.py
 ```
@@ -16,7 +16,7 @@ This command will create a board with 10 rows, 10 columns and 10 mines.
 
 ### Using GUI:
 
-Run the followinf command at the root of the repository:
+Run the following command at the root of the repository:
 ```
 python3 Gui.py
 ```
