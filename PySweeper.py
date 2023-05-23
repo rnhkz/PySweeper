@@ -54,10 +54,14 @@ def main():
         pg.time.Clock().tick(30)
         for event in pg.event.get():
             if event.type == pg.QUIT: sys.exit()
-        
+            elif event.type == pg.KEYDOWN and event.key == pg.K_r:
+                gb = Game_Board(rows, cols, mines)
+                clicked_mine = False
+
         x_pos = 0
         y_pos = 0
         mouse_x, mouse_y = pg.mouse.get_pos()
+        keystate = pg.key.get_pressed()
 
         for row in range(0, rows):
             x_pos = 0
