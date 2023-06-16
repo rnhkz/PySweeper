@@ -32,9 +32,12 @@ python3 PySweeper.py 12 10 15
 ```
 This command will produce a board with 12 rows and 10 columns with 15 mines.
 
-## Additional Features
+## Controls
 
 Game can be reset by pressing the 'R' key.
+* Flags can be placed by right-clicking.
+* Tiles with no flags can be removed by left-clicking.
+* Left clicking while holding down right click will remove all non-flagged tiles surrounding the currently selected tile. The number of surrounding mines must equal the number of surrounding flags for this to work.
 
 ## Libraries used
 

@@ -52,8 +52,8 @@ class Game_Board:
                     temp_map[row][col] = mine_proximity_count
         return temp_map
 
-    def get_new_reveal_map(self, row, col):
-        stack = [[row, col]]
+    def get_new_reveal_map(self, tiles):
+        stack = tiles
         while len(stack) > 0:
             cur_tile = stack.pop()
             row=cur_tile[0]
