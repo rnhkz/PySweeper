@@ -8,8 +8,11 @@ pg.init()
 
 def main():
     rows, cols, mines = 10, 10, 10
-
-    if len(sys.argv) == 4:
+    theme = 'Default'
+    print(sys.argv)
+    if len(sys.argv) == 5:
+        theme = sys.argv[4]
+    if len(sys.argv) >= 4:
         rows, cols, mines = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
         if mines > (rows * cols) * .75:
             mines = int((rows * cols) * .1)
@@ -19,21 +22,21 @@ def main():
 
     gb = Game_Board(rows, cols, mines)
 
-    gb_tiles = [pg.image.load('tiles/0.jpg'),
-                pg.image.load('tiles/1.jpg'),
-                pg.image.load('tiles/2.jpg'),
-                pg.image.load('tiles/3.jpg'),
-                pg.image.load('tiles/4.jpg'),
-                pg.image.load('tiles/5.jpg'),
-                pg.image.load('tiles/6.jpg'),
-                pg.image.load('tiles/7.jpg'),
-                pg.image.load('tiles/8.jpg'),
-                pg.image.load('tiles/9.jpg')]
-    cover = pg.image.load('tiles/cover.jpg')
-    select = pg.image.load('tiles/select.jpg')
-    flag = pg.image.load('tiles/flag.jpg')
-    win_text = pg.image.load('tiles/win.png')
-    lose_text = pg.image.load('tiles/lose.png')
+    gb_tiles = [pg.image.load('Themes/' + theme + '/0.jpg'),
+                pg.image.load('Themes/' + theme + '/1.jpg'),
+                pg.image.load('Themes/' + theme + '/2.jpg'),
+                pg.image.load('Themes/' + theme + '/3.jpg'),
+                pg.image.load('Themes/' + theme + '/4.jpg'),
+                pg.image.load('Themes/' + theme + '/5.jpg'),
+                pg.image.load('Themes/' + theme + '/6.jpg'),
+                pg.image.load('Themes/' + theme + '/7.jpg'),
+                pg.image.load('Themes/' + theme + '/8.jpg'),
+                pg.image.load('Themes/' + theme + '/9.jpg')]
+    cover = pg.image.load('Themes/' + theme + '/cover.jpg')
+    select = pg.image.load('Themes/' + theme + '/select.jpg')
+    flag = pg.image.load('Themes/' + theme + '/flag.jpg')
+    win_text = pg.image.load('Themes/' + theme + '/win.png')
+    lose_text = pg.image.load('Themes/' + theme + '/lose.png')
     
     #Set up game window
     background_colour = (255,255,255)

@@ -32,6 +32,18 @@ python3 PySweeper.py 12 10 15
 ```
 This command will produce a board with 12 rows and 10 columns with 15 mines.
 
+### Themes
+
+Themes allow for the cosmetics of the game to be changed. 
+
+Example:
+```
+python3 PySweeper.py 12 10 15 Dark
+```
+This command will produce a board with 12 rows and 10 columns with 15 mines using the "Dark" theme.
+
+Themes may also be selected from the GUI.
+
 ## Controls
 
 Game can be reset by pressing the 'R' key.
