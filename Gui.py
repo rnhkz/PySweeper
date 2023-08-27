@@ -1,3 +1,4 @@
+import os
 import PySimpleGUI as sg
 import subprocess
 import threading
@@ -5,9 +6,8 @@ import threading
 def start_game(rows, columns, mines, theme):
     subprocess.run(['python3', 'Pysweeper.py', rows, columns, mines, theme])
 
-theme_list = ['Default', 'Dark']
-
 def main():
+    theme_list = next(os.walk('Themes/'))[1]
     sg.theme('DarkAmber')
     layout = [  [sg.Text('Rows'), sg.InputText()],
             [sg.Text('Columns'), sg.InputText()],
