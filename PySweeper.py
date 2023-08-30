@@ -49,7 +49,9 @@ def main():
 
     left_mouse_states = [False, pg.mouse.get_pressed(num_buttons=3)[0]]
     right_mouse_states = [False, pg.mouse.get_pressed(num_buttons=3)[2]]
+    mouse_pos_states = [(0,0), (-1,-1)]
     clicked_mine = False
+    force_update = False
 
     #Game loop
     while 1:
@@ -61,57 +63,70 @@ def main():
                 clicked_mine = False
 
         x_pos, y_pos = 0, 0
-        mouse_x, mouse_y = pg.mouse.get_pos()
+        mouse_pos_states = [mouse_pos_states[1], pg.mouse.get_pos()]
+        mouse_x, mouse_y = mouse_pos_states[1]
         keystate = pg.key.get_pressed()
         left_mouse_states = [left_mouse_states[1], pg.mouse.get_pressed(num_buttons=3)[0]]
         right_mouse_states = [right_mouse_states[1], pg.mouse.get_pressed(num_buttons=3)[2]]
-        for row in range(0, rows):
-            x_pos = 0
-            for col in range(0, cols):
-                if mouse_x > x_pos and mouse_x < x_pos+50 and mouse_y > y_pos and mouse_y < y_pos+50:
-                    if(right_mouse_states[1]):
-                        if(left_mouse_states == [True, False]):
-                            if gb.reveal_map[row][col] == 0:
-                                flags = 0
-                                tiles = []
-                                for x in range (row-1, row+2):
-                                    for y in range (col-1, col+2):
-                                        if min([x,y]) >= 0:
-                                            if x < rows and y < cols:
-                                                if gb.reveal_map[x][y] == -1:
-                                                    flags += 1
-                                                tiles.append([x, y])
-                                if flags == gb.map[row][col]:
-                                    gb.get_new_reveal_map(tiles)
-                                else:
-                                    print(flags)
-                    elif(left_mouse_states == [True, False]):
-                        if gb.reveal_map[row][col] == 1:
-                            if gb.map[row][col] == 9:
-                                clicked_mine = True
-                            gb.get_new_reveal_map([[row, col]])
-                    elif(right_mouse_states == [True, False]):
-                        if gb.reveal_map[row][col] != 0:
-                            gb.change_flag(row, col)
+
+        if( mouse_pos_states[0] != mouse_pos_states[1] or
+            left_mouse_states[0] != left_mouse_states[1] or
+            right_mouse_states[0] != right_mouse_states[1] or
+            force_update):
+            force_update = False
+            for row in range(0, rows):
+                x_pos = 0
+                for col in range(0, cols):
+                    if mouse_x > x_pos and mouse_x < x_pos+50 and mouse_y > y_pos and mouse_y < y_pos+50:
+                        # Right click activated or held
+                        if(right_mouse_states[1]):
+                            # Left click released
+                            if(left_mouse_states == [True, False]):
+                                if gb.reveal_map[row][col] == 0:
+                                    flags = 0
+                                    tiles = []
+                                    for x in range (row-1, row+2):
+                                        for y in range (col-1, col+2):
+                                            if min([x,y]) >= 0:
+                                                if x < rows and y < cols:
+                                                    if gb.reveal_map[x][y] == -1:
+                                                        flags += 1
+                                                    tiles.append([x, y])
+                                    if flags == gb.map[row][col]:
+                                        gb.get_new_reveal_map(tiles)
+                                        force_update = True
+                                    else:
+                                        print(flags)
+                        # Left cick released
+                        elif(left_mouse_states == [True, False]):
+                            if gb.reveal_map[row][col] == 1:
+                                if gb.map[row][col] == 9:
+                                    clicked_mine = True
+                                gb.get_new_reveal_map([[row, col]])
+                                force_update = True
+                        # Right click released
+                        elif(right_mouse_states == [True, False]):
+                            if gb.reveal_map[row][col] != 0:
+                                gb.change_flag(row, col)
+                        else:
+                            screen.blit(select ,(x_pos, y_pos))
+                    elif gb.reveal_map[row][col] == -1:
+                        screen.blit(flag ,(x_pos, y_pos))
+                    elif gb.reveal_map[row][col] == 1:
+                        screen.blit(cover ,(x_pos, y_pos))
                     else:
-                        screen.blit(select ,(x_pos, y_pos))
-                elif gb.reveal_map[row][col] == -1:
-                    screen.blit(flag ,(x_pos, y_pos))
-                elif gb.reveal_map[row][col] == 1:
-                    screen.blit(cover ,(x_pos, y_pos))
-                else:
-                    screen.blit(gb_tiles[gb.map[row][col]], (x_pos, y_pos))
-                x_pos+=50
-            y_pos+=50
-        if clicked_mine:
-            screen.blit(lose_text, (50, 100))
-        else:
-            not_revealed = 0
-            for row in gb.reveal_map:
-                not_revealed += cols - row.count(0)
-            if not_revealed == mines:
-                screen.blit(win_text, (50, 100))
-        pg.display.flip()
+                        screen.blit(gb_tiles[gb.map[row][col]], (x_pos, y_pos))
+                    x_pos+=50
+                y_pos+=50
+            if clicked_mine:
+                screen.blit(lose_text, (50, 100))
+            else:
+                not_revealed = 0
+                for row in gb.reveal_map:
+                    not_revealed += cols - row.count(0)
+                if not_revealed == mines:
+                    screen.blit(win_text, (50, 100))
+            pg.display.flip()
 
 if __name__ == "__main__" :
     main()
