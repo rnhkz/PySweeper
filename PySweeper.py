@@ -61,6 +61,7 @@ def main():
             elif event.type == pg.KEYDOWN and event.key == pg.K_r:
                 gb = Game_Board(rows, cols, mines)
                 clicked_mine = False
+                force_update = True
 
         x_pos, y_pos = 0, 0
         mouse_pos_states = [mouse_pos_states[1], pg.mouse.get_pos()]
