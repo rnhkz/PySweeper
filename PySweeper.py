@@ -92,12 +92,14 @@ def main():
                                                 if x < rows and y < cols:
                                                     if gb.reveal_map[x][y] == -1:
                                                         flags += 1
+                                                    elif gb.map[x][y] == 9:
+                                                        clicked_mine = True
                                                     tiles.append([x, y])
                                     if flags == gb.map[row][col]:
                                         gb.get_new_reveal_map(tiles)
                                         force_update = True
                                     else:
-                                        print(flags)
+                                        clicked_mine = False
                         # Left cick released
                         elif(left_mouse_states == [True, False]):
                             if gb.reveal_map[row][col] == 1:
