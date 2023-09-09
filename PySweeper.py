@@ -9,7 +9,8 @@ pg.init()
 def main():
     rows, cols, mines = 10, 10, 10
     theme = 'Default'
-    print(sys.argv)
+    tile_dim = 50
+
     if len(sys.argv) == 5:
         theme = sys.argv[4]
     if len(sys.argv) >= 4:
@@ -22,6 +23,12 @@ def main():
 
     gb = Game_Board(rows, cols, mines)
 
+    # gb_tiles[0:10] = Non-mine proximity tiles
+    # gb_tiles[10] = Cover
+    # gb_tiles[11] = Select
+    # gb_tiles[12] = Flag
+    # gb_tiles[13] = Win Text
+    # gb_tiles[14] = Lost Text
     gb_tiles = [pg.image.load('Themes/' + theme + '/0.jpg'),
                 pg.image.load('Themes/' + theme + '/1.jpg'),
                 pg.image.load('Themes/' + theme + '/2.jpg'),
@@ -31,16 +38,16 @@ def main():
                 pg.image.load('Themes/' + theme + '/6.jpg'),
                 pg.image.load('Themes/' + theme + '/7.jpg'),
                 pg.image.load('Themes/' + theme + '/8.jpg'),
-                pg.image.load('Themes/' + theme + '/9.jpg')]
-    cover = pg.image.load('Themes/' + theme + '/cover.jpg')
-    select = pg.image.load('Themes/' + theme + '/select.jpg')
-    flag = pg.image.load('Themes/' + theme + '/flag.jpg')
-    win_text = pg.image.load('Themes/' + theme + '/win.png')
-    lose_text = pg.image.load('Themes/' + theme + '/lose.png')
+                pg.image.load('Themes/' + theme + '/9.jpg'),
+                pg.image.load('Themes/' + theme + '/cover.jpg'),
+                pg.image.load('Themes/' + theme + '/select.jpg'),
+                pg.image.load('Themes/' + theme + '/flag.jpg'),
+                pg.image.load('Themes/' + theme + '/win.png'),
+                pg.image.load('Themes/' + theme + '/lose.png')]
     
     #Set up game window
     background_colour = (255,255,255)
-    (width, height) = (cols*50, rows*50)
+    (width, height) = (cols*tile_dim, rows*tile_dim)
 
     screen = pg.display.set_mode((width, height))
     pg.display.set_caption('PySweeper')
@@ -62,6 +69,20 @@ def main():
                 gb = Game_Board(rows, cols, mines)
                 clicked_mine = False
                 force_update = True
+            elif event.type == pg.KEYDOWN and event.key == pg.K_EQUALS and tile_dim < 80:
+                tile_dim += 10
+                for x in range(len(gb_tiles)):
+                    gb_tiles[x] = pg.transform.smoothscale(gb_tiles[x], (tile_dim, tile_dim))
+                (width, height) = (cols*tile_dim, rows*tile_dim)
+                screen = pg.display.set_mode((width, height))
+                force_update = True
+            elif event.type == pg.KEYDOWN and event.key == pg.K_MINUS and tile_dim > 10:
+                tile_dim -= 10
+                for x in range(len(gb_tiles)):
+                    gb_tiles[x] = pg.transform.smoothscale(gb_tiles[x], (tile_dim, tile_dim))
+                (width, height) = (cols*tile_dim, rows*tile_dim)
+                screen = pg.display.set_mode((width, height))
+                force_update = True
 
         x_pos, y_pos = 0, 0
         mouse_pos_states = [mouse_pos_states[1], pg.mouse.get_pos()]
@@ -78,7 +99,7 @@ def main():
             for row in range(0, rows):
                 x_pos = 0
                 for col in range(0, cols):
-                    if mouse_x > x_pos and mouse_x < x_pos+50 and mouse_y > y_pos and mouse_y < y_pos+50:
+                    if mouse_x > x_pos and mouse_x < x_pos+tile_dim and mouse_y > y_pos and mouse_y < y_pos+tile_dim:
                         # Right click activated or held
                         if(right_mouse_states[1]):
                             # Left click released
@@ -112,23 +133,23 @@ def main():
                             if gb.reveal_map[row][col] != 0:
                                 gb.change_flag(row, col)
                         else:
-                            screen.blit(select ,(x_pos, y_pos))
+                            screen.blit(gb_tiles[11] ,(x_pos, y_pos))
                     elif gb.reveal_map[row][col] == -1:
-                        screen.blit(flag ,(x_pos, y_pos))
+                        screen.blit(gb_tiles[12] ,(x_pos, y_pos))
                     elif gb.reveal_map[row][col] == 1:
-                        screen.blit(cover ,(x_pos, y_pos))
+                        screen.blit(gb_tiles[10], (x_pos, y_pos))
                     else:
                         screen.blit(gb_tiles[gb.map[row][col]], (x_pos, y_pos))
-                    x_pos+=50
-                y_pos+=50
+                    x_pos+=tile_dim
+                y_pos+=tile_dim
             if clicked_mine:
-                screen.blit(lose_text, (50, 100))
+                screen.blit(gb_tiles[14], (50, 100))
             else:
                 not_revealed = 0
                 for row in gb.reveal_map:
                     not_revealed += cols - row.count(0)
                 if not_revealed == mines:
-                    screen.blit(win_text, (50, 100))
+                    screen.blit(gb_tiles[13], (50, 100))
             pg.display.flip()
 
 if __name__ == "__main__" :
