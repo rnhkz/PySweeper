@@ -62,7 +62,7 @@ def main():
 
     #Game loop
     while 1:
-        pg.time.Clock().tick(30)
+        pg.time.Clock().tick(60)
         for event in pg.event.get():
             if event.type == pg.QUIT: sys.exit()
             elif event.type == pg.KEYDOWN and event.key == pg.K_r:
@@ -143,13 +143,13 @@ def main():
                     x_pos+=tile_dim
                 y_pos+=tile_dim
             if clicked_mine:
-                screen.blit(gb_tiles[14], (50, 100))
+                screen.blit(gb_tiles[14], (0,0))
             else:
                 not_revealed = 0
                 for row in gb.reveal_map:
                     not_revealed += cols - row.count(0)
                 if not_revealed == mines:
-                    screen.blit(gb_tiles[13], (50, 100))
+                    screen.blit(gb_tiles[13], (0,0))
             pg.display.flip()
 
 if __name__ == "__main__" :
