@@ -3,18 +3,18 @@ import pygame as pg
 import sys
 
 from game_board import Game_Board
+from mouse_object import Mouse_Object
 
 pg.init()
 
-def load_tiles(theme):
+def load_tiles(theme, tile_dim, cols, rows):
     # gb_tiles[0:10] = Non-mine proximity tiles
     # gb_tiles[10] = Cover
     # gb_tiles[11] = Select
     # gb_tiles[12] = Flag
-    # gb_tiles[13] = Win Text
-    # gb_tiles[14] = Lost Text
-    
-    return [pg.image.load('Themes/' + theme + '/0.jpg'),
+    # gb_tiles[13] = Win Sprite
+    # gb_tiles[14] = Lost Sprite
+    tiles = [pg.image.load('Themes/' + theme + '/0.jpg'),
             pg.image.load('Themes/' + theme + '/1.jpg'),
             pg.image.load('Themes/' + theme + '/2.jpg'),
             pg.image.load('Themes/' + theme + '/3.jpg'),
@@ -29,6 +29,14 @@ def load_tiles(theme):
             pg.image.load('Themes/' + theme + '/flag.jpg'),
             pg.image.load('Themes/' + theme + '/win.png'),
             pg.image.load('Themes/' + theme + '/lose.png')]
+    
+    for x in range(len(tiles) -2):
+        tiles[x] = pg.transform.smoothscale(tiles[x], (tile_dim, tile_dim))
+    tiles[13] = pg.transform.smoothscale(tiles[13], (cols*tile_dim, rows*tile_dim))
+    tiles[14] = pg.transform.smoothscale(tiles[14], (cols*tile_dim, rows*tile_dim))
+
+    return tiles
+
 
 def main():
     rows, cols, mines = 10, 10, 10
@@ -44,9 +52,6 @@ def main():
             print(f"Mine count too large! Setting to 10% of current board size ({mines}).")
     elif len(sys.argv) > 1:
         print("Wrong amount of arguments! Setting to defaults (10 rows, 10 columns, 10 mines).")
-
-    gb = Game_Board(rows, cols, mines)
-    gb_tiles = load_tiles(theme)
     
     #Set up game window
     screen = pg.display.set_mode((cols*tile_dim, rows*tile_dim))
@@ -54,9 +59,9 @@ def main():
     screen.fill((255,255,255))
     pg.display.flip()
 
-    left_mouse_states = [False, pg.mouse.get_pressed(num_buttons=3)[0]]
-    right_mouse_states = [False, pg.mouse.get_pressed(num_buttons=3)[2]]
-    mouse_pos_states = [(0,0), (-1,-1)]
+    gb = Game_Board(rows, cols, mines)
+    gb_tiles = load_tiles(theme, tile_dim, cols, rows)
+    m_obj = Mouse_Object()
     clicked_mine = False
     force_update = False
 
@@ -71,39 +76,30 @@ def main():
                 force_update = True
             elif event.type == pg.KEYDOWN and event.key == pg.K_EQUALS and tile_dim < 80:
                 tile_dim += 10
-                gb_tiles = load_tiles(theme)
-                for x in range(len(gb_tiles) -2):
-                    gb_tiles[x] = pg.transform.smoothscale(gb_tiles[x], (tile_dim, tile_dim))
+                gb_tiles = load_tiles(theme, tile_dim, cols, rows)
                 screen = pg.display.set_mode((cols*tile_dim, rows*tile_dim))
                 force_update = True
             elif event.type == pg.KEYDOWN and event.key == pg.K_MINUS and tile_dim > 10:
                 tile_dim -= 10
-                gb_tiles = load_tiles(theme)
-                for x in range(len(gb_tiles)):
-                    gb_tiles[x] = pg.transform.smoothscale(gb_tiles[x], (tile_dim, tile_dim))
+                gb_tiles = load_tiles(theme, tile_dim, cols, rows)
                 screen = pg.display.set_mode((cols*tile_dim, rows*tile_dim))
                 force_update = True
 
         x_pos, y_pos = 0, 0
-        mouse_pos_states = [mouse_pos_states[1], pg.mouse.get_pos()]
-        mouse_x, mouse_y = mouse_pos_states[1]
+        m_obj.update()
+        mouse_x, mouse_y = m_obj.mouse_pos_states[1]
         keystate = pg.key.get_pressed()
-        left_mouse_states = [left_mouse_states[1], pg.mouse.get_pressed(num_buttons=3)[0]]
-        right_mouse_states = [right_mouse_states[1], pg.mouse.get_pressed(num_buttons=3)[2]]
 
-        if( mouse_pos_states[0] != mouse_pos_states[1] or
-            left_mouse_states[0] != left_mouse_states[1] or
-            right_mouse_states[0] != right_mouse_states[1] or
-            force_update):
+        if m_obj.has_action() or force_update:
             force_update = False
             for row in range(0, rows):
                 x_pos = 0
                 for col in range(0, cols):
                     if mouse_x > x_pos and mouse_x < x_pos+tile_dim and mouse_y > y_pos and mouse_y < y_pos+tile_dim:
                         # Right click activated or held
-                        if(right_mouse_states[1]):
+                        if(m_obj.right_mouse_states[1]):
                             # Left click released
-                            if(left_mouse_states == [True, False]):
+                            if(m_obj.left_mouse_states == [True, False]):
                                 if gb.reveal_map[row][col] == 0:
                                     flags = 0
                                     tiles = []
@@ -122,14 +118,14 @@ def main():
                                     else:
                                         clicked_mine = False
                         # Left cick released
-                        elif(left_mouse_states == [True, False]):
+                        elif(m_obj.left_mouse_states == [True, False]):
                             if gb.reveal_map[row][col] == 1:
                                 if gb.map[row][col] == 9:
                                     clicked_mine = True
                                 gb.get_new_reveal_map([[row, col]])
                                 force_update = True
                         # Right click released
-                        elif(right_mouse_states == [True, False]):
+                        elif(m_obj.right_mouse_states == [True, False]):
                             if gb.reveal_map[row][col] != 0:
                                 gb.change_flag(row, col)
                         else:
@@ -143,14 +139,12 @@ def main():
                     x_pos+=tile_dim
                 y_pos+=tile_dim
             if clicked_mine:
-                gb_tiles[14] = pg.transform.smoothscale(gb_tiles[14], (cols*tile_dim, rows*tile_dim))
                 screen.blit(gb_tiles[14], (0,0))
             else:
                 not_revealed = 0
                 for row in gb.reveal_map:
                     not_revealed += cols - row.count(0)
                 if not_revealed == mines:
-                    gb_tiles[13] = pg.transform.smoothscale(gb_tiles[13], (cols*tile_dim, rows*tile_dim))
                     screen.blit(gb_tiles[13], (0,0))
             pg.display.flip()
 
