@@ -6,6 +6,30 @@ from game_board import Game_Board
 
 pg.init()
 
+def load_tiles(theme):
+    # gb_tiles[0:10] = Non-mine proximity tiles
+    # gb_tiles[10] = Cover
+    # gb_tiles[11] = Select
+    # gb_tiles[12] = Flag
+    # gb_tiles[13] = Win Text
+    # gb_tiles[14] = Lost Text
+    
+    return [pg.image.load('Themes/' + theme + '/0.jpg'),
+            pg.image.load('Themes/' + theme + '/1.jpg'),
+            pg.image.load('Themes/' + theme + '/2.jpg'),
+            pg.image.load('Themes/' + theme + '/3.jpg'),
+            pg.image.load('Themes/' + theme + '/4.jpg'),
+            pg.image.load('Themes/' + theme + '/5.jpg'),
+            pg.image.load('Themes/' + theme + '/6.jpg'),
+            pg.image.load('Themes/' + theme + '/7.jpg'),
+            pg.image.load('Themes/' + theme + '/8.jpg'),
+            pg.image.load('Themes/' + theme + '/9.jpg'),
+            pg.image.load('Themes/' + theme + '/cover.jpg'),
+            pg.image.load('Themes/' + theme + '/select.jpg'),
+            pg.image.load('Themes/' + theme + '/flag.jpg'),
+            pg.image.load('Themes/' + theme + '/win.png'),
+            pg.image.load('Themes/' + theme + '/lose.png')]
+
 def main():
     rows, cols, mines = 10, 10, 10
     theme = 'Default'
@@ -22,36 +46,12 @@ def main():
         print("Wrong amount of arguments! Setting to defaults (10 rows, 10 columns, 10 mines).")
 
     gb = Game_Board(rows, cols, mines)
-
-    # gb_tiles[0:10] = Non-mine proximity tiles
-    # gb_tiles[10] = Cover
-    # gb_tiles[11] = Select
-    # gb_tiles[12] = Flag
-    # gb_tiles[13] = Win Text
-    # gb_tiles[14] = Lost Text
-    gb_tiles = [pg.image.load('Themes/' + theme + '/0.jpg'),
-                pg.image.load('Themes/' + theme + '/1.jpg'),
-                pg.image.load('Themes/' + theme + '/2.jpg'),
-                pg.image.load('Themes/' + theme + '/3.jpg'),
-                pg.image.load('Themes/' + theme + '/4.jpg'),
-                pg.image.load('Themes/' + theme + '/5.jpg'),
-                pg.image.load('Themes/' + theme + '/6.jpg'),
-                pg.image.load('Themes/' + theme + '/7.jpg'),
-                pg.image.load('Themes/' + theme + '/8.jpg'),
-                pg.image.load('Themes/' + theme + '/9.jpg'),
-                pg.image.load('Themes/' + theme + '/cover.jpg'),
-                pg.image.load('Themes/' + theme + '/select.jpg'),
-                pg.image.load('Themes/' + theme + '/flag.jpg'),
-                pg.image.load('Themes/' + theme + '/win.png'),
-                pg.image.load('Themes/' + theme + '/lose.png')]
+    gb_tiles = load_tiles(theme)
     
     #Set up game window
-    background_colour = (255,255,255)
-    (width, height) = (cols*tile_dim, rows*tile_dim)
-
-    screen = pg.display.set_mode((width, height))
+    screen = pg.display.set_mode((cols*tile_dim, rows*tile_dim))
     pg.display.set_caption('PySweeper')
-    screen.fill(background_colour)
+    screen.fill((255,255,255))
     pg.display.flip()
 
     left_mouse_states = [False, pg.mouse.get_pressed(num_buttons=3)[0]]
@@ -71,17 +71,17 @@ def main():
                 force_update = True
             elif event.type == pg.KEYDOWN and event.key == pg.K_EQUALS and tile_dim < 80:
                 tile_dim += 10
-                for x in range(len(gb_tiles)):
+                gb_tiles = load_tiles(theme)
+                for x in range(len(gb_tiles) -2):
                     gb_tiles[x] = pg.transform.smoothscale(gb_tiles[x], (tile_dim, tile_dim))
-                (width, height) = (cols*tile_dim, rows*tile_dim)
-                screen = pg.display.set_mode((width, height))
+                screen = pg.display.set_mode((cols*tile_dim, rows*tile_dim))
                 force_update = True
             elif event.type == pg.KEYDOWN and event.key == pg.K_MINUS and tile_dim > 10:
                 tile_dim -= 10
+                gb_tiles = load_tiles(theme)
                 for x in range(len(gb_tiles)):
                     gb_tiles[x] = pg.transform.smoothscale(gb_tiles[x], (tile_dim, tile_dim))
-                (width, height) = (cols*tile_dim, rows*tile_dim)
-                screen = pg.display.set_mode((width, height))
+                screen = pg.display.set_mode((cols*tile_dim, rows*tile_dim))
                 force_update = True
 
         x_pos, y_pos = 0, 0
@@ -143,12 +143,14 @@ def main():
                     x_pos+=tile_dim
                 y_pos+=tile_dim
             if clicked_mine:
+                gb_tiles[14] = pg.transform.smoothscale(gb_tiles[14], (cols*tile_dim, rows*tile_dim))
                 screen.blit(gb_tiles[14], (0,0))
             else:
                 not_revealed = 0
                 for row in gb.reveal_map:
                     not_revealed += cols - row.count(0)
                 if not_revealed == mines:
+                    gb_tiles[13] = pg.transform.smoothscale(gb_tiles[13], (cols*tile_dim, rows*tile_dim))
                     screen.blit(gb_tiles[13], (0,0))
             pg.display.flip()
 

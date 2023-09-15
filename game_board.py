@@ -1,4 +1,5 @@
 import random as rand
+import pygame as pg
 
 class Game_Board:
     def __init__(self, rows, cols, mines):
