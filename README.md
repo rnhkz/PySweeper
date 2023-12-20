@@ -1,14 +1,17 @@
-<img src="demo.gif" alt="PySweeper Demo">
+<p align="center">
+  <img src="demo.gif" width=600 height=600>
+</p>
 
 # PySweeper
 
-MineSweeper made in Python using the PyGame library.
+[MineSweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game)) made in Python using the PyGame library.
 
 ## Run
 
-* Prerequisite: You must have Python 3 installed.
+* **You must have Python 3 installed.**
 
-PySweeper relies on the external libraries PyGame and PySimpleGUI. If you don't already have them, they can be installed by running this command:
+PySweeper relies on the external libraries [PyGame](https://www.pygame.org) and [PySimpleGUI](https://www.pysimplegui.org). If you don't already have them, they can be installed by running this command:
+
 ```
 pip install -r requirements.txt
 ```
