@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="demo.gif" width=600 height=600>
+  <img src="demo.gif" width=600 height=533>
 </p>
 
 # PySweeper
@@ -24,7 +24,7 @@ python3 src/PySweeper.py
 ```
 This command will create a board with 10 rows, 10 columns and 10 mines, using the default theme.
 
-### Modifying Game Settings
+#### Modifying Game Settings:
 
 You may change various game settings by passing arguments to the run command:
 ```
@@ -42,7 +42,9 @@ With this, the rows, columns, mines, and themes can be adjusted using a graphica
 
 ## Controls
 
-Game can be reset by pressing the 'R' key.
 * Flags can be placed by right-clicking.
 * Tiles with no flags can be removed by left-clicking.
 * Left clicking while holding down right click will remove all non-flagged tiles surrounding the currently selected tile. The number of surrounding mines must equal the number of surrounding flags for this to work.
+
+* Pressing the 'R' key will reset the game.
+* Use the '-' and '+' keys to adjust the window size.
