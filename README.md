@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 At the root of the repository, run the following command:
 ```
-python3 src/PySweeper.py
+python PySweeper.py
 ```
 This command will create a board with 10 rows, 10 columns and 10 mines, using the default theme.
 
@@ -28,7 +28,7 @@ This command will create a board with 10 rows, 10 columns and 10 mines, using th
 
 You may change various game settings by passing arguments to the run command:
 ```
-python3 src/PySweeper.py 12 10 15 Dark
+python PySweeper.py 12 10 15 Dark
 ```
 This command will produce a board with 12 rows, 10 columns, and 15 mines, using the "Dark" theme.
 
@@ -36,7 +36,7 @@ This command will produce a board with 12 rows, 10 columns, and 15 mines, using 
 
 Run the following command at the root of the repository:
 ```
-python3 src/Gui.py
+python Gui.py
 ```
 With this, the rows, columns, mines, and themes can be adjusted using a graphical menu.
 

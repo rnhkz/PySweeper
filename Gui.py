@@ -6,9 +6,9 @@ import threading
 def start_game(rows, columns, mines, theme):
     if (rows=='' or columns=='' or mines=='' or theme==''):
         print("Warning: Invalid value given for one or more inputs! Using default settings.")
-        subprocess.run(['python3', 'src/Pysweeper.py'])
+        subprocess.run(['python', 'Pysweeper.py'])
         return
-    subprocess.run(['python3', 'src/Pysweeper.py', rows, columns, mines, theme])
+    subprocess.run(['python', 'Pysweeper.py', rows, columns, mines, theme])
 
 def main():
     theme_list = next(os.walk('Themes/'))[1]
